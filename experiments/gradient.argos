@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<!-- STATIC: distance from robot fb0 (white). Run from the repository root: argos3 -c experiments/gradient.argos -->
+<argos-configuration>
+
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="10" random_seed="1" />
+  </framework>
+
+  <controllers>
+    <fcpp_gradient_controller id="fcpp" library="build/libfcpp_argos">
+      <actuators>
+        <differential_steering implementation="default" />
+        <leds implementation="default" medium="leds" />
+        <range_and_bearing implementation="default" />
+      </actuators>
+      <sensors>
+        <range_and_bearing implementation="medium" medium="rab" show_rays="true" />
+        <positioning implementation="default" />
+        <footbot_proximity implementation="default" show_rays="false" />
+      </sensors>
+      <params source="0" />
+    </fcpp_gradient_controller>
+  </controllers>
+
+  <arena size="5, 5, 1" center="0, 0, 0.5">
+    <box id="wall_north" size="4, 0.1, 0.5" movable="false"><body position="0, 2, 0" orientation="0, 0, 0" /></box>
+    <box id="wall_south" size="4, 0.1, 0.5" movable="false"><body position="0, -2, 0" orientation="0, 0, 0" /></box>
+    <box id="wall_east" size="0.1, 4, 0.5" movable="false"><body position="2, 0, 0" orientation="0, 0, 0" /></box>
+    <box id="wall_west" size="0.1, 4, 0.5" movable="false"><body position="-2, 0, 0" orientation="0, 0, 0" /></box>
+    <distribute>
+      <position method="uniform" min="-1.8, -1.8, 0" max="1.8, 1.8, 0" />
+      <orientation method="uniform" min="0, 0, 0" max="360, 0, 0" />
+      <entity quantity="40" max_trials="100">
+        <foot-bot id="fb" rab_range="0.8" rab_data_size="256"><controller config="fcpp" /></foot-bot>
+      </entity>
+    </distribute>
+  </arena>
+
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <media>
+    <range_and_bearing id="rab" check_occlusions="false" />
+    <led id="leds" />
+  </media>
+
+  <visualization>
+    <qt-opengl>
+      <user_functions library="build/libfcpp_argos" label="fcpp_qtuser_functions" />
+      <camera>
+        <placements>
+          <placement index="0" position="0, 0, 6" look_at="0, 0, 0" up="0, 1, 0" lens_focal_length="30" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>
